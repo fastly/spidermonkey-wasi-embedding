@@ -57,7 +57,6 @@ jobs:
     # with this `sha`
     - name: Publish Release
       uses: ./.github/actions/github-release
-      if: github.event_name == 'push'
       with:
         files: "dist/*.tar.gz"
         name: ${{ steps.tagname.outputs.val }}
