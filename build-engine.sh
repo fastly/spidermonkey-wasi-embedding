@@ -57,7 +57,7 @@ outdir=$mode
 echo $flags $rust_lib_dir
 
 # Build SpiderMonkey for WASI
-MOZ_FETCHES_DIR=~/.mozbuild CC=~/.mozbuild/clang/bin/clang gecko-dev/js/src/devtools/automation/autospider.py --objdir=$objdir $flags wasi
+CXXFLAGS="$CXXFLAGS -DUSEARC4RANDOM" MOZ_FETCHES_DIR=~/.mozbuild CC=~/.mozbuild/clang/bin/clang gecko-dev/js/src/devtools/automation/autospider.py --objdir=$objdir $flags wasi
 
 # Copy header, object, and static lib files
 rm -rf $outdir
