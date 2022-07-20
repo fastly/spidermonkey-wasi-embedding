@@ -4,7 +4,6 @@ on:
     branches: ["**"]
     tags-ignore: [dev]
   pull_request:
-    branches: [main]
 defaults:
   run:
     shell: bash
