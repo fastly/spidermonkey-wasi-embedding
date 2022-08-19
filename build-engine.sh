@@ -12,7 +12,7 @@ rustup update 1.57.0
 rustup default 1.57.0
 rustup target add wasm32-wasi
 
-if [[ ! -a gecko-dev ]]
+if [ ! -d gecko-dev ]
 then
 
   # Clone Gecko repository at the required revision
