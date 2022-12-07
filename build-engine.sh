@@ -46,9 +46,6 @@ case "$mode" in
 esac
 
 
-# Ensure apt-get is current, because otherwise bootstrapping might fail
-sudo apt-get update -y
-
 # Ensure the Rust version matches that used by Gecko, and can compile to WASI
 rustup target add wasm32-wasi
 
