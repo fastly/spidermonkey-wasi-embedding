@@ -10,7 +10,20 @@ gh_url='https://github.'$(cd "$script_dir" && git remote get-url origin | cut -f
 mode="release"
 if [[ $1 == "debug" ]]
 then
-  mode="debug"
+  platform="$(uname)"
+  case "$platform" in
+    Linux)
+      mode="debug_linux"
+      ;;
+
+    Darwin)
+      mode="debug_darwin"
+      ;;
+
+    *)
+      echo "Unsupported debug platform: ${platform}"
+      ;;
+  esac
 fi
 
 git_rev="$(git -C "$script_dir" rev-parse HEAD)"
