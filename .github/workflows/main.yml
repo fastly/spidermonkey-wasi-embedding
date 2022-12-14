@@ -12,30 +12,47 @@ defaults:
 jobs:
   build_engine:
     name: Build Engine
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux
+            mode: release
+          - os: ubuntu-latest
+            target: linux
+            mode: debug
+          - os: macos-latest
+            target: darwin
+            mode: debug
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         submodules: true
 
     - name: Cache SpiderMonkey tarball
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: sm-cache
       with:
         path: |
           dist
-        key: cache-${{ hashFiles('build-engine.sh') }}-${{ hashFiles('gecko-revision') }}-${{ hashFiles('object-files.list') }}
+        key: cache-${{ hashFiles(
+          'build-engine.sh',
+          'gecko-revision',
+          'object-files.list'
+          ) }}-${{ matrix.target }}
 
-    - name: "Build and bundle SpiderMonkey"
+    - name: "Run apt-get update"
+      if: matrix.target == 'linux' && steps.sm-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update -y
+
+    - name: "Build SpiderMonkey"
       if: steps.sm-cache.outputs.cache-hit != 'true'
       run: |
-        mkdir dist
-        sudo apt-get update -y
-        bash ./build-engine.sh release
-        tar -a -cf dist/spidermonkey-wasm-static-lib_release.tar.gz release
-        rm -rf release obj-release
-        bash ./build-engine.sh debug
-        tar -a -cf dist/spidermonkey-wasm-static-lib_debug.tar.gz debug
+        mkdir -p dist
+        bash ./build-engine.sh ${{ matrix.mode }}
+        tar -a -cf dist/spidermonkey-wasm-static-lib_${{ matrix.mode }}_${{ matrix.target }}.tar.gz ${{ matrix.mode }}
 
     - name: Calculate tag name
       run: |
@@ -47,10 +64,10 @@ jobs:
     # Upload tarball as an artifact of the github action run, so the output
     # can be inspected for pull requests.
     - name: Upload tarball
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v3
       if: github.event_name != 'push' || (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/v'))
       with:
-        name: spidermonkey-wasm-static-lib.zip
+        name: spidermonkey-wasm-static-lib-${{ matrix.target }}.zip
         path: dist/
 
     # ... and if this was an actual push (tag or `main`) then we publish a
