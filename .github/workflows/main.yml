@@ -1,8 +1,5 @@
 name: CI
 on:
-  push:
-    branches: [main]
-    tags-ignore: [dev]
   pull_request:
     branches: [main]
 defaults:
@@ -48,7 +45,6 @@ jobs:
     # can be inspected for pull requests.
     - name: Upload tarball
       uses: actions/upload-artifact@v1
-      if: github.event_name != 'push' || (github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/v'))
       with:
         name: spidermonkey-wasm-static-lib.zip
         path: dist/
@@ -59,7 +55,6 @@ jobs:
     - run: cd .github/actions/github-release && npm install --production
     - name: Publish Release
       uses: ./.github/actions/github-release
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
       with:
         files: "dist/*.tar.gz"
         name: ${{ steps.tagname.outputs.val }}
