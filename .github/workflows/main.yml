@@ -57,5 +57,5 @@ jobs:
       uses: ./.github/actions/github-release
       with:
         files: "dist/*.tar.gz"
-        name: ${{ steps.tagname.outputs.val }}
+        name: "dev"
         token: ${{ secrets.GITHUB_TOKEN }}
