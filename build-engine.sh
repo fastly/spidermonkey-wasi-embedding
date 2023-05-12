@@ -3,32 +3,38 @@
 set -euo pipefail
 set -x
 
+if [ $# -lt 1 ]; then
+    echo "Usage: build.sh {release|debug} [{normal|weval}]"
+    exit 1
+fi
+
+if [ $# -eq 1 ]; then
+    $0 $1 normal
+    $0 $1 weval
+    exit 0
+fi
+
 working_dir="$(pwd)"
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-mode="${1:-release}"
+# Mode: release or debug
+mode=$1
+# Variant: normal or weval
+variant=$2
 mozconfig="${working_dir}/mozconfig-${mode}"
-objdir="obj-$mode"
-outdir="$mode"
+objdir="obj-$mode-$variant"
+outdir="$mode-$variant"
 
-cat << EOF > "$mozconfig"
-ac_add_options --enable-project=js
-ac_add_options --enable-application=js
-ac_add_options --target=wasm32-unknown-wasi
-ac_add_options --without-system-zlib
-ac_add_options --without-intl-api
-ac_add_options --disable-jit
-ac_add_options --disable-shared-js
-ac_add_options --disable-shared-memory
-ac_add_options --disable-tests
-ac_add_options --disable-clang-plugin
-ac_add_options --enable-jitspew
-ac_add_options --enable-optimize
-ac_add_options --enable-js-streams
+cat $script_dir/mozconfig.defaults > "$mozconfig"
+cat << EOF >> "$mozconfig"
 ac_add_options --prefix=${working_dir}/${objdir}/dist
 mk_add_options MOZ_OBJDIR=${working_dir}/${objdir}
 mk_add_options AUTOCLOBBER=1
 EOF
+
+if [ "$mode" == "weval" ]; then
+    cat $script_dir/mozconfig.weval >> "$mozconfig"
+fi
 
 target="$(uname)"
 case "$target" in
