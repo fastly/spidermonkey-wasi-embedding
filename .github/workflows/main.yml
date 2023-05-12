@@ -36,6 +36,10 @@ jobs:
         rm -rf release obj-release
         bash ./build-engine.sh debug
         tar -a -cf dist/spidermonkey-wasm-static-lib_debug.tar.gz debug
+        rm -rf debug obj-debug
+        bash ./build-engine.sh weval
+        tar -a -cf dist/spidermonkey-wasm-static-lib_weval.tar.gz weval
+        rm -rf weval obj-weval
 
     - name: Calculate tag name
       run: |
