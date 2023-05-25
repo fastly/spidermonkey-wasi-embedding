@@ -3,6 +3,11 @@
 set -euo pipefail
 set -x
 
+if (wasm-opt --version | grep -q "wasm-opt version" ); then
+    echo "wasm-opt corrupts the SpiderMonkey build; please remove it or alias it to /bin/true!"
+    exit 1
+fi
+
 if [ $# -lt 1 ]; then
     echo "Usage: build.sh {release|debug} [{normal|weval}]"
     exit 1
@@ -21,7 +26,7 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 mode=$1
 # Variant: normal or weval
 variant=$2
-mozconfig="${working_dir}/mozconfig-${mode}"
+mozconfig="${working_dir}/mozconfig-${mode}-${variant}"
 objdir="obj-$mode-$variant"
 outdir="$mode-$variant"
 
@@ -32,7 +37,7 @@ mk_add_options MOZ_OBJDIR=${working_dir}/${objdir}
 mk_add_options AUTOCLOBBER=1
 EOF
 
-if [ "$mode" == "weval" ]; then
+if [ "$variant" == "weval" ]; then
     cat $script_dir/mozconfig.weval >> "$mozconfig"
 fi
 
