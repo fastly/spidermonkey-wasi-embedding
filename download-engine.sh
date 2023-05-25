@@ -11,7 +11,7 @@ mode=${1:release}
 variant=${2:normal}
 
 git_rev="$(git -C "$script_dir" rev-parse HEAD)"
-file="spidermonkey-wasm-static-lib_${mode}-${variant}.tar.gz"
+file="spidermonkey-wasm-static-lib_${mode}_${variant}.tar.gz"
 bundle_url="${gh_url}/releases/download/rev_${git_rev}/${file}"
 
 curl --fail -L -O "$bundle_url"
