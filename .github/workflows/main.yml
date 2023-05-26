@@ -47,7 +47,7 @@ jobs:
         bash ./build-engine.sh debug weval
         tar -a -cf dist/spidermonkey-wasm-static-lib_debug_weval.tar.gz debug-weval
         rm -rf debug-weval obj-debug-weval
-        if [[ -v ORIGINAL_WASM_OPT_PATH ]]; then
+        if [[ -z ORIGINAL_WASM_OPT_PATH ]]; then
           mv "$ORIGINAL_WASM_OPT_PATH.bak" "$ORIGINAL_WASM_OPT_PATH"
         fi
 
