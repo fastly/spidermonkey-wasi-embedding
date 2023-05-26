@@ -1,8 +1,12 @@
 /gecko-dev
-/obj-release
-/obj-debug
-/release
-/debug
+/obj-release-normal
+/obj-debug-normal
+/obj-release-weval
+/obj-debug-weval
+/release-normal
+/debug-normal
+/release-weval
+/debug-weval
 /dist
 /mozconfig-*
 .DS_Store

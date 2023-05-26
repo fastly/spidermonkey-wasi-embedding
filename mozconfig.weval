@@ -1,0 +1,3 @@
+ac_add_options --enable-js-interp-native-callstack
+ac_add_options --enable-js-interp-specialization
+ac_add_options --enable-js-interp-weval
