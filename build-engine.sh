@@ -108,6 +108,7 @@ cd "$working_dir"
 MOZCONFIG="${mozconfig}" \
 MOZ_FETCHES_DIR=~/.mozbuild \
 CC=~/.mozbuild/clang/bin/clang \
+CXX=~/.mozbuild/clang/bin/clang++ \
   python3 "${working_dir}/gecko-dev/mach" \
   --no-interactive \
     build
